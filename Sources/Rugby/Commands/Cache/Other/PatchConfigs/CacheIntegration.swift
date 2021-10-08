@@ -22,4 +22,13 @@ struct CacheIntegration {
                                   inFilesByRegEx: "(\(fileRegex))",
                                   folder: supportFilesFolder)
     }
+
+    func fixSubFoldersPath() throws {
+        let cacheFolder = try Folder.current.subfolder(at: cacheFolder)
+        let foldersNeedsMoved = cacheFolder.findSubFolders(with: "*.framework")
+        try foldersNeedsMoved.forEach { folder in
+            let parent = try cacheFolder.createSubfolder(named: folder.name.withoutExtension)
+            try folder.move(to: parent)
+        }
+    }
 }
